@@ -17,3 +17,7 @@
 		作者：兀雨书屋【小红书】，2025  
 
 ![image](https://github.com/shanleiguang/vQi/blob/main/003.png)
+
+## 赞助支持
+如果您覺得本工具對您的工作或生活有些微幫助，請給予必要的支持，我也有動力繼續完善更新，謝謝！
+![image](https://github.com/shanleiguang/vQi/blob/main/sponsor.png)
