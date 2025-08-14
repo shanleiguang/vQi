@@ -1,5 +1,5 @@
 
-![image](https://github.com/shanleiguang/vQi/blob/main/001.jpg)
+![image](https://github.com/shanleiguang/vQi/blob/main/001.png)
 
 # vQi is  
 
