@@ -356,5 +356,5 @@ sub print_piece_oc {
 		($px, $py) = @{$tref->[$xid]->[$yid]};
 	}
 	$timg->Draw(primitive => 'circle', points => "$px,$py @{[$px + $pce_or]},$py", fill => 'transparent',
-		'stroke-dasharray' => [3,3,3], stroke => $ocolor, strokewidth => $pce_olw);
+		'stroke-dasharray' => [3,3], stroke => $ocolor, strokewidth => $pce_olw);
 }
