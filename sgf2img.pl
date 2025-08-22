@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 #围棋SGF文件转中国古棋谱风格图片，SGF文件保存到games/01/game.sgf
-#by shanleiguang, 2025.7
+#by shanleiguang, 2025.8
 use strict;
 use warnings;
 
@@ -17,6 +17,7 @@ binmode(STDIN, 'encoding(utf8)');
 binmode(STDOUT, 'encoding(utf8)');
 binmode(STDERR, 'encoding(utf8)');
 
+my ($software, $version) = ('vQi', 'v1.0');
 my %opts;
 
 getopts('hDlcz:g:', \%opts);
@@ -29,7 +30,7 @@ my $game_id = $opts{'g'}; #棋谱ID
 
 print "错误：棋谱ID目录不存在，'games/$opts{'g'}'\n" if(not -d "games/$game_id");
 print "错误：棋谱SGF文件不存在，'games/$opts{'g'}/game.sgf'\n" if(not -f "games/$game_id/game.sgf");
-print "错误：棋谱SGF转图片配置文件不存在，'games/$opts{'g'}/sgfimg.sgf'\n" if(not -f "games/$game_id/sgfimg.sgf");
+print "错误：棋谱SGF转图片配置文件不存在，'games/$opts{'g'}/sgfimg.cfg'\n" if(not -f "games/$game_id/sgfimg.cfg");
 
 my $type_id = $opts{'t'} ? $opts{'t'} : 1; # 默认为1: MultiGo
 my $sgf_file = "games/$game_id/game.sgf"; #棋谱SGF文件
@@ -64,17 +65,7 @@ my ($pce_cr, $pce_lw) = ($sgfimg{'piece_circle_r'}, $sgfimg{'piece_circle_lw'});
 my ($pce_or, $pce_olw) = ($sgfimg{'piece_circle_or'}, $sgfimg{'piece_circle_olw'});
 my ($pce_olbc, $pce_olwc) = ($sgfimg{'piece_circle_olbc'}, $sgfimg{'piece_circle_olwc'});
 
-my ($nzhp1x, $nzhp1y)   = ($sgfimg{'number_zhp1_x'}, $sgfimg{'number_zhp1_y'});
-my ($nzhp21x, $nzhp21y) = ($sgfimg{'number_zhp21_x'}, $sgfimg{'number_zhp21_y'});
-my ($nzhp22x, $nzhp22y) = ($sgfimg{'number_zhp22_x'}, $sgfimg{'number_zhp22_y'});
-my ($nzhp31x, $nzhp31y) = ($sgfimg{'number_zhp31_x'}, $sgfimg{'number_zhp31_y'});
-my ($nzhp32x, $nzhp32y) = ($sgfimg{'number_zhp32_x'}, $sgfimg{'number_zhp32_y'});
-my ($nzhp33x, $nzhp33y) = ($sgfimg{'number_zhp33_x'}, $sgfimg{'number_zhp33_y'});
-my ($nzhp41x, $nzhp41y) = ($sgfimg{'number_zhp41_x'}, $sgfimg{'number_zhp41_y'});
-my ($nzhp42x, $nzhp42y) = ($sgfimg{'number_zhp42_x'}, $sgfimg{'number_zhp42_y'});
-my ($nzhp43x, $nzhp43y) = ($sgfimg{'number_zhp43_x'}, $sgfimg{'number_zhp43_y'});
-my ($nzhp44x, $nzhp44y) = ($sgfimg{'number_zhp44_x'}, $sgfimg{'number_zhp44_y'});
-
+print "读取棋谱文件'$sgf_file'...\n";
 my $game = load_sgf $sgf_file;
 my $gcontent = $game->[0];
 
@@ -88,7 +79,7 @@ foreach my $gkey (@ginfo_keys) {
 	if(defined $ginfo->{$gkey}) {
 		$ginfo->{$gkey} =~ s/\s|\t|\n//g;
 		if(ref $ginfo->{$gkey} eq 'ARRAY') {
-			$ginfo->{$gkey} = join ' ', @{$ginfo->{$gkey}};
+			$ginfo->{$gkey} = join ' ', @{$ginfo->{$gkey}} if(defined $ginfo->{$gkey});
 		}
 		$ginfo->{$gkey} = decode($decode_id, $ginfo->{$gkey});
 		#print "$gkey -> $ginfo->{$gkey}\n";
@@ -224,14 +215,14 @@ close(COMMENTS);
 
 sub print_help {
 	print <<END
-   ./$0，用于将围棋SGF棋谱文件转换为古棋谱风格的图片
+   ./$software $version，围棋SGF棋谱文件转换为古棋谱风格回合图片
 	-h\t帮助信息
 	-D\tDump SGF文件数据结构
 	-l\t查看SGF文件赛事就出信息
 	-c\t仅将每回合讲解备注文字输出到comments.txt文件
 	-z\t测试模式，仅生成指定回合数量的图片
 	-g\t棋谱ID，注意棋谱SGF文件需命名为'game.sgf'
-		作者：兀雨书屋【小红书】，2025
+		作者：GitHub\@shanleiguang@, 小红书\@兀雨书屋，2025
 END
 }
 
@@ -251,8 +242,19 @@ sub get_zhnum {
 
 sub get_zhnum_xy {
 	my ($num, $cr, $pref) = @_;
+	my ($nzhp1x, $nzhp1y)   = ($sgfimg{'number_zhp1_x'}, $sgfimg{'number_zhp1_y'});
+	my ($nzhp21x, $nzhp21y) = ($sgfimg{'number_zhp21_x'}, $sgfimg{'number_zhp21_y'});
+	my ($nzhp22x, $nzhp22y) = ($sgfimg{'number_zhp22_x'}, $sgfimg{'number_zhp22_y'});
+	my ($nzhp31x, $nzhp31y) = ($sgfimg{'number_zhp31_x'}, $sgfimg{'number_zhp31_y'});
+	my ($nzhp32x, $nzhp32y) = ($sgfimg{'number_zhp32_x'}, $sgfimg{'number_zhp32_y'});
+	my ($nzhp33x, $nzhp33y) = ($sgfimg{'number_zhp33_x'}, $sgfimg{'number_zhp33_y'});
+	my ($nzhp41x, $nzhp41y) = ($sgfimg{'number_zhp41_x'}, $sgfimg{'number_zhp41_y'});
+	my ($nzhp42x, $nzhp42y) = ($sgfimg{'number_zhp42_x'}, $sgfimg{'number_zhp42_y'});
+	my ($nzhp43x, $nzhp43y) = ($sgfimg{'number_zhp43_x'}, $sgfimg{'number_zhp43_y'});
+	my ($nzhp44x, $nzhp44y) = ($sgfimg{'number_zhp44_x'}, $sgfimg{'number_zhp44_y'});
 	my $zhnum = get_zhnum($num);
 	my ($cx, $cy) = @$pref;
+
 	if(length($zhnum) == 1) {
 		my $cs1 = $cr*$num_zhb;
 		return ([$cx+$cs1*$nzhp1x, $cy+$cs1*$nzhp1y, $cs1]);
@@ -334,7 +336,6 @@ sub print_piece {
 		}
 		if($num_tid == 0) {
 			my ($ns, $nx, $ny);
-
 			$ns = (length($cnt) == 3) ? $pce_cr*$num_zhs : $pce_cr*$num_zhm;
 			$nx = (length($cnt) == 3) ? $px-length($cnt)*$ns/3.1 : (length($cnt) == 2) ? $px-length($cnt)*$ns/3.35 : $px-length($cnt)*$ns/3;
 			$ny = $py+$ns/3;
